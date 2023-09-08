@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import { initialProfile } from "@/lib/intial-profile";
 import { db } from "@/lib/db";
 
@@ -13,6 +15,10 @@ const SetupPage = async () => {
       }
     }
   })
+
+  if (server) {
+    return redirect(`/servers/${server.id}`);
+  }
 
   return (
     <div>Create a Server</div>
