@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FileEdit } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -33,6 +34,12 @@ const formSchema = z.object({
 });
 
 export const InitialModal = () => {
+  const [isMounted, setIsMounted] = useState(false); //used for a hydration error fix to prevent unmounted page loading
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,6 +54,11 @@ export const InitialModal = () => {
     console.log(values);
   }
 
+  if (!isMounted) {
+    return null;
+  }
+
+  
   return (
     <Dialog open>
       <DialogContent
@@ -62,7 +74,7 @@ export const InitialModal = () => {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="space-y-8 x-6">
+            <div className="space-y-8 px-6">
               <div className="flex items-center justify-center text-center">
                 TODO: Image Upload
               </div>
@@ -85,10 +97,16 @@ export const InitialModal = () => {
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+            <DialogFooter className="bg-gray-100 px-6 py-4">
+              <Button variant="primary" disabled={isLoading}>
+                Create
+              </Button>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>
